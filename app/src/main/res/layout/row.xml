@@ -61,6 +61,7 @@
             <TextView
                 android:id="@+id/explicit_warning"
                 android:textColor="@color/red"
+                android:text="Explicit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

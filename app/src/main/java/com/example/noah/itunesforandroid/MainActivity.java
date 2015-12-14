@@ -402,17 +402,25 @@ public class MainActivity extends AppCompatActivity {
             directorView.setText(movieList.get(position).getDirector());
             releaseDateView.setText(movieList.get(position).getReleaseDate());
             runtimeView.setText(String.valueOf(movieList.get(position).getRunTime()) + " minutes");
-            shortDescriptionView.setText(movieList.get(position).getShortDescription());
+            shortDescriptionView.setVisibility(View.GONE);
             longDescriptionView.setText(movieList.get(position).getLongDescription());
             ratingView.setText(movieList.get(position).getRating());
-            regularPriceView.setText(String.valueOf(movieList.get(position).getRegularPrice()));
-            rentalPriceView.setText(String.valueOf(movieList.get(position).getRentalPrice()));
-            hdPriceView.setText(String.valueOf(movieList.get(position).getHdPrice()));
-            hdRentalPrice.setText(String.valueOf(movieList.get(position).getHdRentalPrice()));
+            regularPriceView.setText("Buy: $" + String.valueOf(movieList.get(position).getRegularPrice()));
+            rentalPriceView.setText("Rent: $" + String.valueOf(movieList.get(position).getRentalPrice()));
+            hdPriceView.setText("Buy HD: $" + String.valueOf(movieList.get(position).getHdPrice()));
+            hdRentalPrice.setText("Rent HD: $" + String.valueOf(movieList.get(position).getHdRentalPrice()));
 
             String explicitString = movieList.get(position).getExplicit();
-            if(explicitString == "explicit")
-                explicitView.setText(explicitString);
+            if(ratingView.getText().charAt(0)== 'R' ||
+                    ratingView.getText().charAt(0)== 'U' ||
+                    ratingView.getText().charAt(0)== 'N' ) {
+                //Log.e("LOL", ratingView.getText());
+                explicitView.setVisibility(View.VISIBLE);
+            }
+            else{
+                explicitView.setVisibility(View.INVISIBLE);
+                Log.e("LOL", String.valueOf(ratingView.length()));
+            }
 
             return convertView;
         }
