@@ -2,6 +2,8 @@ package com.example.noah.itunesforandroid;
 
         import android.content.Context;
         import android.content.Intent;
+        import android.graphics.Bitmap;
+        import android.graphics.BitmapFactory;
         import android.media.Image;
         import android.os.AsyncTask;
         import android.os.Bundle;
@@ -45,12 +47,13 @@ package com.example.noah.itunesforandroid;
         import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
+    private ListView searchResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        searchResults =  (ListView)findViewById(R.id.search_resuls_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         //private List<Movie> movieList;
 
         @Override
-        protected void onPostExecute(List<Movie> result) {
+        protected void onPostExecute(final List<Movie> result) {
             super.onPostExecute(result);
 
             Log.e("TEST", "Creating adapter");
@@ -132,9 +135,26 @@ public class MainActivity extends AppCompatActivity {
 
             Log.e("TEST", "Setting Adapter");
 
-            ListView searchResults = (ListView)findViewById(R.id.search_resuls_view);
             searchResults.setAdapter(adapter);
             Log.e("TEST", "Adapter Set Successfully");
+            searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent i = new Intent(MainActivity.this, DetailsActivity.class);
+                    i.putExtra("movieName", result.get(position).getMovieName());
+                    i.putExtra("rating", result.get(position).getRating());
+                    i.putExtra("director", result.get(position).getDirector());
+                    i.putExtra("explicit", result.get(position).getExplicit());
+                    i.putExtra("genre", result.get(position).getGenre());
+                    i.putExtra("longDescription", result.get(position).getLongDescription());
+                    i.putExtra("hdPrice", result.get(position).getHdPrice());
+                    i.putExtra("rental", result.get(position).getRentalPrice());
+                    i.putExtra("runTime", result.get(position).getRunTime());
+                    i.putExtra("imageUrl", result.get(position).getImageUrl());
+                    startActivity(i);
+
+                }
+            });
         }
 
         @Override
@@ -196,10 +216,11 @@ public class MainActivity extends AppCompatActivity {
                     double rentalPrice = current.optDouble("trackRentalPrice", 0.0);
                     double hdRentalPrice = current.optDouble("trackHdRentalPrice", 0.0);
                     String runTime = current.optString("trackTimeMillis", "Runtime Unknown");
+                    String imageUrl = current.optString("artworkUrl100", "none");
 
                     Movie currentMovie = new Movie(movieName,rating,director,explicit,genre,
                             shortDescription, longDescription, releaseDate, hdPrice, regularPrice,
-                            rentalPrice, hdRentalPrice, runTime);
+                            rentalPrice, hdRentalPrice, runTime, imageUrl);
 
 //                    finalBufferData.append(movieName + " " + rating + " " + director + " " +
 //                            explicit + " " + genre + shortDescription + "" +
@@ -279,6 +300,10 @@ public class MainActivity extends AppCompatActivity {
             TextView rentalPriceView;
             TextView hdRentalPrice;
 
+            // show The Image
+            new DownloadImageTask((ImageView) convertView.findViewById(R.id.imageView))
+                    .execute(movieList.get(position).getImageUrl());
+
             movieTitleView = (TextView)convertView.findViewById(R.id.title);
             directorView = (TextView)convertView.findViewById(R.id.director);
             releaseDateView = (TextView)convertView.findViewById(R.id.year);
@@ -295,7 +320,35 @@ public class MainActivity extends AppCompatActivity {
 
             return convertView;
         }
+
+        private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+            ImageView bmImage;
+
+            public DownloadImageTask(ImageView bmImage) {
+                this.bmImage = bmImage;
+            }
+
+            protected Bitmap doInBackground(String... urls) {
+                String urldisplay = urls[0];
+                Bitmap mIcon11 = null;
+                try {
+                    InputStream in = new java.net.URL(urldisplay).openStream();
+                    mIcon11 = BitmapFactory.decodeStream(in);
+                } catch (Exception e) {
+                    Log.e("Error", e.getMessage());
+                    e.printStackTrace();
+                }
+                return mIcon11;
+            }
+
+            protected void onPostExecute(Bitmap result) {
+                //Bitmap resized = Bitmap.createScaledBitmap(result, 309, 224, true);
+                bmImage.setImageBitmap(result);
+            }
+        }
     }
+
+
 }
 
 

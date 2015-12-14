@@ -18,11 +18,12 @@ public class Movie {
     double rentalPrice;
     double hdRentalPrice;
     String runTime;
+    String imageUrl;
 
 
     public Movie( String movieName, String rating, String director,String explicit, String genre,
                   String shortDescription, String longDescription,String releaseDate, double hdPrice,
-                  double regularPrice, double rentalPrice, double hdRentalPrice, String runTime)
+                  double regularPrice, double rentalPrice, double hdRentalPrice, String runTime, String imageUrl)
     {
 
         this.runTime = runTime;
@@ -38,11 +39,14 @@ public class Movie {
         this.regularPrice = regularPrice;
         this.rentalPrice = rentalPrice;
         this.hdRentalPrice = hdRentalPrice;
+        this.imageUrl = imageUrl;
     }
 
     public String getRating() {
         return rating;
     }
+
+    public String getImageUrl() { return imageUrl; }
 
     public void setRating(String rating) {
         this.rating = rating;
