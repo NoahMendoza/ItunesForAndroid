@@ -12,15 +12,79 @@
 
 
     <EditText android:id="@+id/search_bar"
-        android:hint="Search for an audiobook"
+        android:hint="Search for a movie"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <Button
-        android:text="Go!"
-        android:id="@+id/search_button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:text="Director"
+        android:id="@+id/director_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"/>
+
+        <Button
+        android:text="Release Year"
+        android:id="@+id/year_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
+
+        <Button
+        android:text="Actor"
+        android:id="@+id/actor_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <Button
+        android:text="Genre"
+        android:id="@+id/genre_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
+    <Button
+        android:text="Movie"
+        android:id="@+id/movie_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
+
+
+    </LinearLayout>
+    <!--<Button-->
+        <!--android:text="Advanced Search!"-->
+        <!--android:visibility="visible"-->
+        <!--android:id="@+id/advanced_search_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:text="Find movies!"
+            android:id="@+id/search_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <!--<Button-->
+            <!--android:text="Enable advanced Search"-->
+            <!--android:id="@+id/advanced_search_enable"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+    </LinearLayout>
+
 
 
     <ListView
