@@ -17,6 +17,7 @@ package com.example.noah.itunesforandroid;
         import android.view.Menu;
         import android.view.MenuItem;
         import android.view.ViewGroup;
+        import android.view.inputmethod.InputMethodManager;
         import android.widget.AdapterView;
         import android.widget.ArrayAdapter;
         import android.widget.EditText;
@@ -76,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager inputManager = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
                 if(searchBar.getText().length() == 0)
                     searchBar.setError("That's a pretty vague search");
 
@@ -196,7 +202,10 @@ public class MainActivity extends AppCompatActivity {
                     titles.add(line);
             reader.close();
             fis.close();
-            Log.d("WHAT", input);
+
+            for(String title : titles) {
+                Log.d("LOG", title);
+            }
 
         } catch (FileNotFoundException e) {
 
@@ -309,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Movie currentMovie = new Movie(movieName,rating,director,explicit,genre,
                             shortDescription, longDescription, releaseDate, hdPrice, regularPrice,
-                            rentalPrice, hdRentalPrice, runTime);
+                            rentalPrice, hdRentalPrice, runTime, imageUrl);
 
 //                    finalBufferData.append(movieName + " " + rating + " " + director + " " +
 //                            explicit + " " + genre + shortDescription + "" +
