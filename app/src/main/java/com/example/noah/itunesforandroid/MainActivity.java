@@ -46,7 +46,6 @@ package com.example.noah.itunesforandroid;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ListView searchResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final TextView test = (TextView)findViewById(R.id.test);
+        //final TextView test = (TextView)findViewById(R.id.test);
         final EditText searchBar = (EditText)findViewById(R.id.search_bar);
         final Button searchButton = (Button)findViewById(R.id.search_button);
 
@@ -132,22 +131,27 @@ public class MainActivity extends AppCompatActivity {
             Log.e("TEST", "Adapter Created");
 
             Log.e("TEST", "Setting Adapter");
+
+            ListView searchResults = (ListView)findViewById(R.id.search_resuls_view);
             searchResults.setAdapter(adapter);
             Log.e("TEST", "Adapter Set Successfully");
         }
 
         @Override
         protected List<Movie> doInBackground(String... urls) {
-            String query = urls[0];
 
+            String query = urls[0];
+            query = query.replace(" ", "+");
 
             HttpURLConnection connection = null;
             BufferedReader reader = null;
             try {
 
                 Log.e("TEST", "Making connection");
+
+
                // URL url = new URL("https://itunes.apple.com/search?term=jack+johnson&limit=25");
-                URL url = new URL("https://itunes.apple.com/search?term=jack&entity=movie&limit=25");
+                URL url = new URL("https://itunes.apple.com/search?term=" + query + "&entity=movie&limit=25");
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
