@@ -20,6 +20,7 @@ package com.example.noah.itunesforandroid;
         import android.view.inputmethod.InputMethodManager;
         import android.widget.AdapterView;
         import android.widget.ArrayAdapter;
+        import android.widget.AutoCompleteTextView;
         import android.widget.EditText;
         import android.widget.ImageView;
         import android.widget.ListView;
@@ -28,6 +29,7 @@ package com.example.noah.itunesforandroid;
 
         import java.io.FileInputStream;
         import java.io.FileNotFoundException;
+        import java.io.FileOutputStream;
         import java.io.InputStreamReader;
         import java.io.Reader;
         import java.io.StringWriter;
@@ -53,6 +55,7 @@ package com.example.noah.itunesforandroid;
 
 public class MainActivity extends AppCompatActivity {
     private ListView searchResults;
+    private static final String FILENAME = "SavedSearches";
 
     private String attribute = "movieTerm";
 
@@ -61,9 +64,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         searchResults =  (ListView)findViewById(R.id.search_resuls_view);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        
         //final TextView test = (TextView)findViewById(R.id.test);
         final EditText searchBar = (EditText)findViewById(R.id.search_bar);
         final Button searchButton = (Button)findViewById(R.id.search_button);
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 else {
 
                     JSONAsyncTask requestThread = new JSONAsyncTask();
+                    saveSearch(searchBar.getText().toString());
                     requestThread.execute(searchBar.getText().toString());
 
                     if(requestThread.getStatus() == AsyncTask.Status.FINISHED)
@@ -193,6 +195,40 @@ public class MainActivity extends AppCompatActivity {
 
     public void favoriteOnClick(View v) {
         startActivity(new Intent(this, FavoritesListActivity.class));
+    }
+
+    private String[] getPastSearch() {
+        String[] returnArr = new String[5];
+        try {
+            FileInputStream fis = openFileInput(FILENAME);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+            String line = null;
+
+            int counter = 0;
+            while ((line = reader.readLine()) != null || counter < 5) {
+                returnArr[counter] = line;
+                ++counter;
+            }
+
+        } catch (FileNotFoundException e) {
+
+        } catch (IOException e) {
+
+        }
+        return returnArr;
+    }
+
+    private void saveSearch(String search) {
+        try {
+            FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_APPEND);
+            fos.flush();
+            fos.write((search + "\n").getBytes());
+            fos.close();
+        } catch(FileNotFoundException e) {
+
+        } catch (IOException e) {
+        }
+
     }
 
 
