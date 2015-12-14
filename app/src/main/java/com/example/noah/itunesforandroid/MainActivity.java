@@ -2,17 +2,22 @@ package com.example.noah.itunesforandroid;
 
         import android.content.Context;
         import android.content.Intent;
+        import android.media.Image;
         import android.os.AsyncTask;
         import android.os.Bundle;
         import android.support.design.widget.FloatingActionButton;
         import android.support.design.widget.Snackbar;
         import android.support.v7.app.AppCompatActivity;
         import android.support.v7.widget.Toolbar;
+        import android.view.LayoutInflater;
         import android.view.View;
         import android.view.Menu;
         import android.view.MenuItem;
+        import android.view.ViewGroup;
         import android.widget.AdapterView;
+        import android.widget.ArrayAdapter;
         import android.widget.EditText;
+        import android.widget.ImageView;
         import android.widget.ListView;
         import android.widget.TextView;
         import android.widget.Button;
@@ -25,6 +30,8 @@ package com.example.noah.itunesforandroid;
         import java.net.MalformedURLException;
         import android.util.Log;
         import android.widget.Toast;
+
+        import com.example.noah.itunesforandroid.movies.Movie;
 
         import org.json.JSONArray;
         import org.json.JSONException;
@@ -109,22 +116,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public class JSONAsyncTask extends AsyncTask<String, String, String>
+    public class JSONAsyncTask extends AsyncTask<String, String, List<Movie>>
     {
         private static final String TAG = "Homepage";
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(List<Movie> result) {
             super.onPostExecute(result);
-
-            TextView test = (TextView)findViewById(R.id.test);
-            test.setText(result);
+            //TODO need to set data to the list
+            //TextView test = (TextView)findViewById(R.id.test);
+            //test.setText(result);
         }
 
         @Override
-        protected String doInBackground(String... urls) {
-            String results = "";
-
+        protected List<Movie> doInBackground(String... urls) {
             String query = urls[0];
 
 
@@ -158,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 JSONArray movieArray = jsonParent.getJSONArray("results");
 
                 StringBuffer finalBufferData = new StringBuffer();
+
+                List<Movie> movieList = new ArrayList<>();
                 for(int i = 0; i < movieArray.length(); i++)
                 {
                     JSONObject current = movieArray.getJSONObject(i);
@@ -175,13 +182,18 @@ public class MainActivity extends AppCompatActivity {
                     double hdRentalPrice = current.optDouble("trackHdRentalPrice", 0.0);
                     String runTime = current.optString("trackTimeMillis", "Runtime Unknown");
 
-                    finalBufferData.append(movieName + " " + rating + " " + director + " " +
-                            explicit + " " + genre + shortDescription + "" +
-                            longDescription + releaseDate + hdPrice + regularPrice
-                        + rentalPrice + hdRentalPrice + runTime);
-                }
+                    Movie currentMovie = new Movie(movieName,rating,director,explicit,genre,
+                            shortDescription, longDescription, releaseDate, hdPrice, regularPrice,
+                            rentalPrice, hdRentalPrice, runTime);
 
-                return finalBufferData.toString();
+//                    finalBufferData.append(movieName + " " + rating + " " + director + " " +
+//                            explicit + " " + genre + shortDescription + "" +
+//                            longDescription + releaseDate + hdPrice + regularPrice
+//                        + rentalPrice + hdRentalPrice + runTime);
+
+                    movieList.add(currentMovie);
+                }
+                return movieList;
             }
             catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -202,11 +214,65 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-
-            Log.d(TAG, results);
             //Return null if everything falls apart
             return null;
         }
     }
+
+
+    public class MovieAdapater extends ArrayAdapter{
+        private List<Movie> movieList;
+        private int resource;
+        private LayoutInflater inflater;
+        public MovieAdapater(Context context, int resource, List<Movie> objects) {
+            super(context, resource, objects);
+            movieList = objects;
+            this.resource = resource;
+            inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent){
+            if(convertView == null)
+            {
+                convertView = inflater.inflate(R.layout.row, null);
+            }
+
+//
+//            Movie currentMovie = new Movie(movieName,rating,director,explicit,genre,
+//                    shortDescription, longDescription, releaseDate, hdPrice, regularPrice,
+//                    rentalPrice, hdRentalPrice, runTime);
+
+            ImageView movieIcon;
+            TextView movieTitleView;
+            TextView ratingView;
+            TextView directorView;
+            TextView runtimeView;
+            TextView explicitView;
+            TextView shortDescriptionView;
+            TextView longDescriptionView;
+            TextView releaseDateView;
+            TextView hdPriceView;
+            TextView regularPriceView;
+            TextView rentalPriceView;
+            TextView hdRentalPrice;
+
+            movieTitleView = (TextView)convertView.findViewById(R.id.title);
+            directorView = (TextView)convertView.findViewById(R.id.director);
+            releaseDateView = (TextView)convertView.findViewById(R.id.year);
+            runtimeView = (TextView)convertView.findViewById(R.id.runningTime);
+            shortDescriptionView = (TextView)convertView.findViewById(R.id.shortDescription);
+            longDescriptionView = (TextView)convertView.findViewById(R.id.longDescription);
+
+            movieTitleView.setText(movieList.get(position).getMovieName());
+            directorView.setText(movieList.get(position).getDirector());
+            movieTitleView.setText(movieList.get(position).getMovieName());
+            movieTitleView.setText(movieList.get(position).getMovieName());
+            movieTitleView.setText(movieList.get(position).getMovieName());
+
+            return convertView;
+        }
+    }
 }
+
 
