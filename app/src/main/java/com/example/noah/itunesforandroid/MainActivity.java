@@ -4,6 +4,7 @@ package com.example.noah.itunesforandroid;
         import android.content.Intent;
         import android.graphics.Bitmap;
         import android.graphics.BitmapFactory;
+        import android.graphics.Color;
         import android.media.Image;
         import android.os.AsyncTask;
         import android.os.Bundle;
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView searchResults;
     private final String FILENAME = "MoviePrefs";
 
+    private String attribute = "movieTerm";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
         //final TextView test = (TextView)findViewById(R.id.test);
         final EditText searchBar = (EditText)findViewById(R.id.search_bar);
         final Button searchButton = (Button)findViewById(R.id.search_button);
+        final Button directorField = (Button)findViewById(R.id.director_search);
+        final Button actorField = (Button)findViewById(R.id.actor_search);
+        final Button yearField = (Button)findViewById(R.id.year_search);
+        final Button genreField = (Button)findViewById(R.id.genre_search);
+        final Button movieField = (Button)findViewById(R.id.movie_search);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +96,70 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        directorField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attribute = "directorTerm";
+                directorField.setTextColor(Color.parseColor("#0000FF"));
+                actorField.setTextColor(Color.parseColor("#FFFFFF"));
+                genreField.setTextColor(Color.parseColor("#FFFFFF"));
+                yearField.setTextColor(Color.parseColor("#FFFFFF"));
+                movieField.setTextColor(Color.parseColor("#FFFFFF"));
+            }
+        });
+
+
+        actorField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attribute = "actorTerm";
+                actorField.setTextColor(Color.parseColor("#0000FF"));
+                directorField.setTextColor(Color.parseColor("#FFFFFF"));
+                genreField.setTextColor(Color.parseColor("#FFFFFF"));
+                yearField.setTextColor(Color.parseColor("#FFFFFF"));
+                movieField.setTextColor(Color.parseColor("#FFFFFF"));
+            }
+        });
+
+        yearField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attribute = "releaseYearTerm";
+                yearField.setTextColor(Color.parseColor("#0000FF"));
+                actorField.setTextColor(Color.parseColor("#FFFFFF"));
+                genreField.setTextColor(Color.parseColor("#FFFFFF"));
+                directorField.setTextColor(Color.parseColor("#FFFFFF"));
+                movieField.setTextColor(Color.parseColor("#FFFFFF"));
+            }
+        });
+
+        genreField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attribute = "genreTerm";
+                genreField.setTextColor(Color.parseColor("#0000FF"));
+                actorField.setTextColor(Color.parseColor("#FFFFFF"));
+                directorField.setTextColor(Color.parseColor("#FFFFFF"));
+                yearField.setTextColor(Color.parseColor("#FFFFFF"));
+                movieField.setTextColor(Color.parseColor("#FFFFFF"));
+            }
+        });
+
+        movieField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attribute = "movieTerm";
+                movieField.setTextColor(Color.parseColor("#0000FF"));
+                actorField.setTextColor(Color.parseColor("#FFFFFF"));
+                genreField.setTextColor(Color.parseColor("#FFFFFF"));
+                yearField.setTextColor(Color.parseColor("#FFFFFF"));
+                directorField.setTextColor(Color.parseColor("#FFFFFF"));
+            }
+        });
+
+
+
 
 
     }
@@ -150,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.e("TEST", "Setting Adapter");
 
+            ListView searchResults = (ListView)findViewById(R.id.search_resuls_view);
             searchResults.setAdapter(adapter);
             Log.e("TEST", "Adapter Set Successfully");
             searchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -186,7 +259,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                // URL url = new URL("https://itunes.apple.com/search?term=jack+johnson&limit=25");
-                URL url = new URL("https://itunes.apple.com/search?term=" + query + "&entity=movie&limit=25");
+                URL url = new URL("https://itunes.apple.com/search?term=" + query +
+                        "&entity=movie&limit=25" + "&attribute=" + attribute);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
@@ -235,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Movie currentMovie = new Movie(movieName,rating,director,explicit,genre,
                             shortDescription, longDescription, releaseDate, hdPrice, regularPrice,
-                            rentalPrice, hdRentalPrice, runTime, imageUrl);
+                            rentalPrice, hdRentalPrice, runTime);
 
 //                    finalBufferData.append(movieName + " " + rating + " " + director + " " +
 //                            explicit + " " + genre + shortDescription + "" +
