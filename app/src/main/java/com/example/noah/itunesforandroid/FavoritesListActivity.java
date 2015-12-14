@@ -71,7 +71,10 @@ public class FavoritesListActivity extends AppCompatActivity {
         ListView favListView = (ListView)findViewById(R.id.fav_list_view);
         ArrayList<favItem> favoriteItems = new ArrayList<>();
         favItemAdapter adapter = new favItemAdapter(this, favoriteItems);
+
+        Log.e("TEST","setting favorites adapter");
         favListView.setAdapter(adapter);
+        Log.e("TEST", "adapter set");
         adapter.clear();
 
         populate(favoriteItems);
@@ -88,6 +91,11 @@ public class FavoritesListActivity extends AppCompatActivity {
 
             while ((line = reader.readLine()) != null) {
                 titles.add(line); //This just gets all data from the storage
+            }
+
+            if(titles.size() == 0)
+            {
+                return;
             }
 
             //Because I know exactly how the storage is set up, I can do this

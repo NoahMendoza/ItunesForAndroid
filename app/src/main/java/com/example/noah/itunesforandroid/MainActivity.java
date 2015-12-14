@@ -324,22 +324,24 @@ public class MainActivity extends AppCompatActivity {
                     String genre = current.optString("primaryGenreName", "No Genre");
                     String shortDescription = current.optString("shortDescription", "");
                     String longDescription = current.optString("longDescription", "");
+
+
+                    //Truncate extra date information
                     String releaseDate = current.optString("releaseDate", "");
+                    String[] separatedDate = releaseDate.split("-");
+                    releaseDate = separatedDate[0];//Get the year only
+
                     double hdPrice = current.optDouble("trackHdPrice", 0.0);
                     double regularPrice = current.optDouble("trackPrice", 0.0);
                     double rentalPrice = current.optDouble("trackRentalPrice", 0.0);
                     double hdRentalPrice = current.optDouble("trackHdRentalPrice", 0.0);
-                    String runTime = current.optString("trackTimeMillis", "Runtime Unknown");
+                    int runTimeMilliSeconds = current.optInt("trackTimeMillis", 0);
+                    int runTimeMinutes = runTimeMilliSeconds / (1000 * 60);
                     String imageUrl = current.optString("artworkUrl100", "none");
 
                     Movie currentMovie = new Movie(movieName,rating,director,explicit,genre,
                             shortDescription, longDescription, releaseDate, hdPrice, regularPrice,
-                            rentalPrice, hdRentalPrice, runTime, imageUrl);
-
-//                    finalBufferData.append(movieName + " " + rating + " " + director + " " +
-//                            explicit + " " + genre + shortDescription + "" +
-//                            longDescription + releaseDate + hdPrice + regularPrice
-//                        + rentalPrice + hdRentalPrice + runTime);
+                            rentalPrice, hdRentalPrice, runTimeMinutes, imageUrl);
 
                     movieList.add(currentMovie);
                 }
@@ -424,13 +426,29 @@ public class MainActivity extends AppCompatActivity {
             runtimeView = (TextView)convertView.findViewById(R.id.runningTime);
             shortDescriptionView = (TextView)convertView.findViewById(R.id.shortDescription);
             longDescriptionView = (TextView)convertView.findViewById(R.id.longDescription);
+            ratingView = (TextView)convertView.findViewById(R.id.rating);
+            explicitView = (TextView)convertView.findViewById(R.id.explicit_warning);
+            regularPriceView = (TextView)convertView.findViewById(R.id.buy);
+            rentalPriceView = (TextView)convertView.findViewById(R.id.rent);
+            hdPriceView = (TextView)convertView.findViewById(R.id.hd_buy);
+            hdRentalPrice = (TextView)convertView.findViewById(R.id.hd_rent);
+
 
             movieTitleView.setText(movieList.get(position).getMovieName());
             directorView.setText(movieList.get(position).getDirector());
             releaseDateView.setText(movieList.get(position).getReleaseDate());
-            runtimeView.setText(movieList.get(position).getRunTime());
+            runtimeView.setText(String.valueOf(movieList.get(position).getRunTime()) + " minutes");
             shortDescriptionView.setText(movieList.get(position).getShortDescription());
             longDescriptionView.setText(movieList.get(position).getLongDescription());
+            ratingView.setText(movieList.get(position).getRating());
+            regularPriceView.setText(String.valueOf(movieList.get(position).getRegularPrice()));
+            rentalPriceView.setText(String.valueOf(movieList.get(position).getRentalPrice()));
+            hdPriceView.setText(String.valueOf(movieList.get(position).getHdPrice()));
+            hdRentalPrice.setText(String.valueOf(movieList.get(position).getHdRentalPrice()));
+
+            String explicitString = movieList.get(position).getExplicit();
+            if(explicitString == "explicit")
+                explicitView.setText(explicitString);
 
             return convertView;
         }
