@@ -46,6 +46,8 @@ package com.example.noah.itunesforandroid;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ListView searchResults;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,13 +121,19 @@ public class MainActivity extends AppCompatActivity {
     public class JSONAsyncTask extends AsyncTask<String, String, List<Movie>>
     {
         private static final String TAG = "Homepage";
+        //private List<Movie> movieList;
 
         @Override
         protected void onPostExecute(List<Movie> result) {
             super.onPostExecute(result);
-            //TODO need to set data to the list
-            //TextView test = (TextView)findViewById(R.id.test);
-            //test.setText(result);
+
+            Log.e("TEST", "Creating adapter");
+            MovieAdapter adapter = new MovieAdapter(getApplicationContext(), R.layout.row, result);
+            Log.e("TEST", "Adapter Created");
+
+            Log.e("TEST", "Setting Adapter");
+            searchResults.setAdapter(adapter);
+            Log.e("TEST", "Adapter Set Successfully");
         }
 
         @Override
@@ -137,10 +145,13 @@ public class MainActivity extends AppCompatActivity {
             BufferedReader reader = null;
             try {
 
+                Log.e("TEST", "Making connection");
                // URL url = new URL("https://itunes.apple.com/search?term=jack+johnson&limit=25");
                 URL url = new URL("https://itunes.apple.com/search?term=jack&entity=movie&limit=25");
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
+
+                Log.e("TEST", "Connected");
 
                 InputStream stream = connection.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(stream));
@@ -193,6 +204,8 @@ public class MainActivity extends AppCompatActivity {
 
                     movieList.add(currentMovie);
                 }
+
+                Log.e("TEST", "JSON Parsed");
                 return movieList;
             }
             catch (MalformedURLException e) {
@@ -220,22 +233,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public class MovieAdapater extends ArrayAdapter{
+    public class MovieAdapter extends ArrayAdapter<Movie>{
         private List<Movie> movieList;
         private int resource;
         private LayoutInflater inflater;
-        public MovieAdapater(Context context, int resource, List<Movie> objects) {
+        public MovieAdapter(Context context, int resource, List<Movie> objects) {
+
             super(context, resource, objects);
+            Log.d("TEST", "Construct Adapter");
             movieList = objects;
             this.resource = resource;
             inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+            Log.d("TEST", "Adapter Constructed");
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent){
             if(convertView == null)
             {
-                convertView = inflater.inflate(R.layout.row, null);
+                Log.e("TEST", "inflating");
+                convertView = inflater.inflate(resource, null);
+                Log.e("TEST", "inflated!");
             }
 
 //
@@ -266,9 +284,10 @@ public class MainActivity extends AppCompatActivity {
 
             movieTitleView.setText(movieList.get(position).getMovieName());
             directorView.setText(movieList.get(position).getDirector());
-            movieTitleView.setText(movieList.get(position).getMovieName());
-            movieTitleView.setText(movieList.get(position).getMovieName());
-            movieTitleView.setText(movieList.get(position).getMovieName());
+            releaseDateView.setText(movieList.get(position).getReleaseDate());
+            runtimeView.setText(movieList.get(position).getRunTime());
+            shortDescriptionView.setText(movieList.get(position).getShortDescription());
+            longDescriptionView.setText(movieList.get(position).getLongDescription());
 
             return convertView;
         }
