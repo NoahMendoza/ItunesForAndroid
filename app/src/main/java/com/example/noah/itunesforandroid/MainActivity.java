@@ -16,8 +16,10 @@ package com.example.noah.itunesforandroid;
         import android.widget.ListView;
         import android.widget.TextView;
         import android.widget.Button;
-
         import java.io.InputStreamReader;
+        import java.io.Reader;
+        import java.io.StringWriter;
+        import java.io.Writer;
         import java.net.URL;
         import java.net.HttpURLConnection;
         import java.net.MalformedURLException;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final TextView test = (TextView)findViewById(R.id.test);
         final EditText searchBar = (EditText)findViewById(R.id.search_bar);
         final Button searchButton = (Button)findViewById(R.id.search_button);
 
@@ -105,105 +108,105 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class JSONAsyncTask extends AsyncTask<String, Void, String>
+
+    public class JSONAsyncTask extends AsyncTask<String, String, String>
     {
         private static final String TAG = "Homepage";
 
         @Override
-        protected String doInBackground(String... urls) {
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
 
+            TextView test = (TextView)findViewById(R.id.test);
+            test.setText(result);
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
             String results = "";
-            Log.d(TAG, results + "testing!");
-            Log.d(TAG, "WHAAAAAAAAAAAAAAAAAAT");
-            for(String query:urls){
-                results = makeNetworkRequest(query);
+
+            String query = urls[0];
+
+
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+
+               // URL url = new URL("https://itunes.apple.com/search?term=jack+johnson&limit=25");
+                URL url = new URL("https://itunes.apple.com/search?term=jack&entity=movie&limit=25");
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream stream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(stream));
+
+                StringBuffer buffer = new StringBuffer();
+
+                String line = "";
+                while((line = reader.readLine()) != null)
+                {
+                    buffer.append(line + "\n");
+                }
+
+                Log.d(TAG, buffer.toString());
+
+                //Raw output from the API call
+                String finalJSON = buffer.toString();
+
+                //Get the actual array of movies
+                JSONObject jsonParent = new JSONObject(finalJSON);
+                JSONArray movieArray = jsonParent.getJSONArray("results");
+
+                StringBuffer finalBufferData = new StringBuffer();
+                for(int i = 0; i < movieArray.length(); i++)
+                {
+                    JSONObject current = movieArray.getJSONObject(i);
+                    String movieName = current.optString("trackName", "No Title");
+                    String rating =  current.optString("contentAdvisoryRating", "No Parental Advisory");
+                    String director = current.optString("artistName", "No Director Name");
+                    String explicit = current.optString("trackExplicitness", "Unknown Explicitness");
+                    String genre = current.optString("primaryGenreName", "No Genre");
+                    String shortDescription = current.optString("shortDescription", "");
+                    String longDescription = current.optString("longDescription", "");
+                    String releaseDate = current.optString("releaseDate", "");
+                    double hdPrice = current.optDouble("trackHdPrice", 0.0);
+                    double regularPrice = current.optDouble("trackPrice", 0.0);
+                    double rentalPrice = current.optDouble("trackRentalPrice", 0.0);
+                    double hdRentalPrice = current.optDouble("trackHdRentalPrice", 0.0);
+                    String runTime = current.optString("trackTimeMillis", "Runtime Unknown");
+
+                    finalBufferData.append(movieName + " " + rating + " " + director + " " +
+                            explicit + " " + genre + shortDescription + "" +
+                            longDescription + releaseDate + hdPrice + regularPrice
+                        + rentalPrice + hdRentalPrice + runTime);
+                }
+
+                return finalBufferData.toString();
             }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if(connection != null)
+                    connection.disconnect();
+                try {
+                    if(reader != null)
+                        reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
 
             Log.d(TAG, results);
-            return results;
+            //Return null if everything falls apart
+            return null;
         }
-
-
-        //make a network request
-        public String makeNetworkRequest(String query)
-        {
-            String response = "";
-            Log.d(TAG, response);
-            try {
-                //Set the query string
-                query = query.replace(" ","&");
-                String urlString = "https://itunes.apple.com/search?term=jack+johnson";
-                Log.d(TAG, urlString);
-
-                //Create the request
-                URL url = new URL(urlString);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-
-                //Connect and make sure it worked
-                connection.connect();
-                int responseCode = connection.getResponseCode();
-                Log.d(TAG, "The response code: " + responseCode);
-
-                if (responseCode == HttpURLConnection.HTTP_OK)
-                {
-
-                    Log.d("TAG", "getting input stream");
-                    response = convertToString(connection.getInputStream());
-                    Log.d(TAG, response);
-                    Log.d(TAG, "input assigned");
-                }
-                else
-                {
-                    Log.e(TAG, "Uh oh, our URL might not be right!");
-
-                }
-
-                connection.disconnect();
-
-            }
-            //Exception handling
-            catch (MalformedURLException e)
-            {
-                Log.e(TAG, "Your URL is malformed!", e);
-            }
-            catch (IOException e)
-            {
-                Log.e(TAG, "Could not connect to the URL", e);
-            }
-
-            return response;
-        }
-
-        //Convert JSON returned from get request into a string
-        public String convertToString(InputStream inputStream) throws IOException
-        {
-            Log.d(TAG, "converting to string");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder builder = new StringBuilder();
-            String line;
-            Log.d(TAG, reader.readLine());
-            while ((line = reader.readLine()) != null)
-            {
-                Log.d(TAG, "line" + line);
-                builder.append(line+"\n");
-                Log.d(TAG, builder.toString());
-            }
-            reader.close();
-            Log.d(TAG,"Conversion done");
-            Log.d(TAG,builder.toString() + "THE RESPONSE STRING");
-            Log.d(TAG,"I AM SO CONFUSED");
-
-            int results = builder.length();
-
-            Log.d(TAG, "fucking shit");
-            //Log.d(TAG, results);
-
-            return builder.toString();
-
-
-        }
-
-
     }
 }
+
