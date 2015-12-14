@@ -53,7 +53,6 @@ package com.example.noah.itunesforandroid;
 
 public class MainActivity extends AppCompatActivity {
     private ListView searchResults;
-    private final String FILENAME = "MoviePrefs";
 
     private String attribute = "movieTerm";
 
@@ -193,26 +192,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void favoriteOnClick(View v) {
-        ArrayList<String> titles = new ArrayList<>();
-        try {
-            FileInputStream fis = openFileInput(FILENAME);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-            String line = null, input="";
-            while ((line = reader.readLine()) != null)
-                    titles.add(line);
-            reader.close();
-            fis.close();
-
-            for(String title : titles) {
-                Log.d("LOG", title);
-            }
-
-        } catch (FileNotFoundException e) {
-
-        } catch (IOException e) {
-
-        }
-
+        startActivity(new Intent(this, FavoritesListActivity.class));
     }
 
 

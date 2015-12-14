@@ -23,6 +23,8 @@ import java.io.InputStream;
 public class DetailsActivity extends AppCompatActivity {
 
     private String movie;
+    private String description;
+    private String imageUrl;
     private final String FILENAME = "MoviePrefs";
 
     @Override
@@ -34,6 +36,7 @@ public class DetailsActivity extends AppCompatActivity {
         // show The Image
         new DownloadImageTask(((ImageView)findViewById(R.id.image_view)))
                 .execute(i.getStringExtra("imageUrl"));
+        imageUrl = i.getStringExtra("imageUrl") + "\n";
 
 
         ((TextView)findViewById(R.id.movie_name)).setText("Title: " + i.getStringExtra("movieName"));
@@ -42,6 +45,7 @@ public class DetailsActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.director)).setText("Director: " + i.getStringExtra("director"));
         ((TextView)findViewById(R.id.genre)).setText("Genre: " + i.getStringExtra("genre"));
         ((TextView)findViewById(R.id.description)).setText("Description: " + i.getStringExtra("longDescription"));
+        description = i.getStringExtra("longDescription") + "\n";
         ((TextView)findViewById(R.id.explicit)).setText("explicit: " + i.getStringExtra("explicit"));
         ((TextView)findViewById(R.id.runTime)).setText("Run Time: " + i.getStringExtra("runTime"));
         ((TextView)findViewById(R.id.hdPrice)).setText("HD Move Price: $" + Double.toString(i.getDoubleExtra("hdPrice", 0.0)));
@@ -52,7 +56,10 @@ public class DetailsActivity extends AppCompatActivity {
     public void favOnClick(View v) {
         try {
             FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_APPEND);
+            fos.flush();
             fos.write(movie.getBytes());
+            fos.write(description.getBytes());
+            fos.write(imageUrl.getBytes());
             fos.close();
         } catch(FileNotFoundException e) {
 
