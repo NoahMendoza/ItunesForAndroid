@@ -17,13 +17,13 @@ public class Movie {
     double regularPrice;
     double rentalPrice;
     double hdRentalPrice;
-    String runTime;
+    int runTime;
     String imageUrl;
 
 
     public Movie( String movieName, String rating, String director,String explicit, String genre,
                   String shortDescription, String longDescription,String releaseDate, double hdPrice,
-                  double regularPrice, double rentalPrice, double hdRentalPrice, String runTime, String imageUrl)
+                  double regularPrice, double rentalPrice, double hdRentalPrice, int runTime, String imageUrl)
     {
 
         this.runTime = runTime;
@@ -132,11 +132,11 @@ public class Movie {
         this.hdRentalPrice = hdRentalPrice;
     }
 
-    public String getRunTime() {
+    public int getRunTime() {
         return runTime;
     }
 
-    public void setRunTime(String runTime) {
+    public void setRunTime(int runTime) {
         this.runTime = runTime;
     }
 
