@@ -1,5 +1,6 @@
 package com.example.noah.itunesforandroid;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,9 +15,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class DetailsActivity extends AppCompatActivity {
+
+    private String movie;
+    private final String FILENAME = "MoviePrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +37,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         ((TextView)findViewById(R.id.movie_name)).setText("Title: " + i.getStringExtra("movieName"));
+        movie = i.getStringExtra("movieName") + "\n";
         ((TextView)findViewById(R.id.rating)).setText("Rating: " + i.getStringExtra("rating"));
         ((TextView)findViewById(R.id.director)).setText("Director: " + i.getStringExtra("director"));
         ((TextView)findViewById(R.id.genre)).setText("Genre: " + i.getStringExtra("genre"));
@@ -39,6 +47,18 @@ public class DetailsActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.hdPrice)).setText("HD Move Price: $" + Double.toString(i.getDoubleExtra("hdPrice", 0.0)));
         ((TextView)findViewById(R.id.rental)).setText("Rental Move Price: $" + Double.toString(i.getDoubleExtra("rental", 0.0)));
 
+    }
+
+    public void favOnClick(View v) {
+        try {
+            FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_APPEND);
+            fos.write(movie.getBytes());
+            fos.close();
+        } catch(FileNotFoundException e) {
+
+        } catch (IOException e) {
+
+        }
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

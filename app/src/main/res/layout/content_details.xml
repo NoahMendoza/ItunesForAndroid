@@ -55,6 +55,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/genre"/>
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Favorite This Movie"
+            android:gravity="center"
+            android:onClick="favOnClick"/>
     </LinearLayout>
 
 </ScrollView>

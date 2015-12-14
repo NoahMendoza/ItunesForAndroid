@@ -23,6 +23,9 @@ package com.example.noah.itunesforandroid;
         import android.widget.ListView;
         import android.widget.TextView;
         import android.widget.Button;
+
+        import java.io.FileInputStream;
+        import java.io.FileNotFoundException;
         import java.io.InputStreamReader;
         import java.io.Reader;
         import java.io.StringWriter;
@@ -48,6 +51,7 @@ package com.example.noah.itunesforandroid;
 
 public class MainActivity extends AppCompatActivity {
     private ListView searchResults;
+    private final String FILENAME = "MoviePrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +60,6 @@ public class MainActivity extends AppCompatActivity {
         searchResults =  (ListView)findViewById(R.id.search_resuls_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         //final TextView test = (TextView)findViewById(R.id.test);
         final EditText searchBar = (EditText)findViewById(R.id.search_bar);
@@ -117,6 +112,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void favoriteOnClick(View v) {
+        ArrayList<String> titles = new ArrayList<>();
+        try {
+            FileInputStream fis = openFileInput(FILENAME);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+            String line = null, input="";
+            while ((line = reader.readLine()) != null)
+                    titles.add(line);
+            reader.close();
+            fis.close();
+            Log.d("WHAT", input);
+
+        } catch (FileNotFoundException e) {
+
+        } catch (IOException e) {
+
+        }
+
     }
 
 
